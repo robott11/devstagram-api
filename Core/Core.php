@@ -42,8 +42,17 @@ class Core
 
         //FORMATA O CONTROLLER PRA StudlyCaps
         $currentController = ucfirst($currentController);
-        $currentController = $prefix.$currentController;
 
+        //ERRO 404
+        if (
+            !file_exists("../Controllers/".$currentController.".php") ||
+            !method_exists($prefix.$currentController, $currentAction)
+        ) {
+            $currentController = "NotFoundController";
+            $currentAction = "index";
+        }
+
+        $currentController = $prefix.$currentController;
         $c = new $currentController();
         call_user_func_array([
             $c,
