@@ -6,9 +6,9 @@ class Controller
     /**
      * retorna o método HTTP da requisição
      *
-     * @return void
+     * @return string
      */
-    public function getMethod()
+    public function getMethod(): string
     {
         return $_SERVER["REQUEST_METHOD"];
     }
