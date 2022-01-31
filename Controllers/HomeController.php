@@ -7,6 +7,5 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $this->returnJson($this->getRequestData());
     }
 }

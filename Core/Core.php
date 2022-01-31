@@ -5,6 +5,8 @@ class Core
 {
     /**
      * Método responsável por parsear a url e definir o controller e action
+     * 
+     * @return void
      */
     public function run(): void
     {
