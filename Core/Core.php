@@ -45,7 +45,7 @@ class Core
 
         //ERRO 404
         if (
-            !file_exists("../Controllers/".$currentController.".php") ||
+            !file_exists(__DIR__."/../Controllers/".$currentController.".php") ||
             !method_exists($prefix.$currentController, $currentAction)
         ) {
             $currentController = "NotFoundController";

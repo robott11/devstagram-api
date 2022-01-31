@@ -1,10 +1,12 @@
 <?php
 namespace Controllers;
 
-class HomeController
+use Core\Controller;
+
+class HomeController extends Controller
 {
     public function index()
     {
-        echo "Hello World!";
+        $this->returnJson($this->getRequestData());
     }
 }

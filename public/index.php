@@ -1,7 +1,10 @@
 <?php
 session_start();
-require "../vendor/autoload.php";
-require "../config.php";
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: *");
+
+require __DIR__."/../vendor/autoload.php";
+require __DIR__."/../config.php";
 
 $core = new Core\Core();
 $core->run();
