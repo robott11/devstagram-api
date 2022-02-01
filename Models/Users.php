@@ -3,6 +3,7 @@ namespace Models;
 
 use \Core\Model;
 use \Models\Jwt;
+use \Models\Photos;
 
 class Users extends Model
 {
@@ -72,6 +73,25 @@ class Users extends Model
     }
 
     /**
+     * valida um token
+     *
+     * @param string $token
+     * @return void
+     */
+    public function validateJwt(string $token)
+    {
+        $jwt = new Jwt();
+        $info = $jwt->validate($token);
+
+        if (isset($info->id_user)) {
+            $this->id_user = $info->id_user;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * verifica se um email existe
      *
      * @param string $email
@@ -89,5 +109,83 @@ class Users extends Model
         } else {
             return false;
         }
+    }
+
+    /**
+     * retorna o id do ususário logado
+     *
+     * @return integer
+     */
+    public function getId(): int
+    {
+        return $this->id_user;
+    }
+
+    /**
+     * retorna as informações do usuário pelo id
+     *
+     * @param integer $id
+     * @return array
+     */
+    public function getInfo(int $id): array
+    {
+        $array = [];
+        
+        $sql = "SELECT id, name, email, avatar FROM users WHERE id = :id";
+        $sql = $this->db->prepare($sql);
+        $sql->bindValue(":id", $id);
+        $sql->execute();
+
+        if ($sql->rowCount() > 0) {
+            $array = $sql->fetch(\PDO::FETCH_ASSOC);
+            
+            $photos = new Photos;
+
+            if (!empty($array["avatar"])) {
+                $array["avatar"] = BASE_URL."media/avatar/".$array["avatar"];
+            } else {
+                $array["avatar"] = BASE_URL."media/avatar/default.jpg";
+            }
+
+            $array["following"]    = $this->getFollowingCount($id);
+            $array["followers"]    = $this->getFollowersCount($id);
+            $array["photos_count"] = $photos->getPhotosCount($id);
+        }
+
+        return $array;
+    }
+
+    /**
+     * retorna a quantidade de pessoas que um usuário segue
+     *
+     * @param integer $id_user
+     * @return int
+     */
+    public function getFollowingCount(int $id_user): int
+    {
+        $sql = "SELECT COUNT(*) AS c FROM users_following WHERE id_user_follower = :id_user";
+        $sql = $this->db->prepare($sql);
+        $sql->bindValue(":id_user", $id_user);
+        $sql->execute();
+        $info = $sql->fetch();
+
+        return $info["c"];
+    }
+
+    /**
+     * retorna a quantidade seguidores de um usuário
+     *
+     * @param integer $id_user
+     * @return int
+     */
+    public function getFollowersCount(int $id_user): int
+    {
+        $sql = "SELECT COUNT(*) AS c FROM users_following WHERE id_user_followed = :id_user";
+        $sql = $this->db->prepare($sql);
+        $sql->bindValue(":id_user", $id_user);
+        $sql->execute();
+        $info = $sql->fetch();
+
+        return $info["c"];
     }
 }
