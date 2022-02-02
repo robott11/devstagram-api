@@ -156,6 +156,66 @@ class Users extends Model
     }
 
     /**
+     * edita informações do usuário
+     *
+     * @param integer $id
+     * @param array $data
+     * @return string
+     */
+    public function editInfo(int $id, array $data): string
+    {
+        if ($id === $this->getId()) {
+            //VERIFICAR QUAIS DADOS DEVEM SER EDITADOS
+            $toChange = [];
+
+            if (!empty($data["name"])) {
+                $toChange["name"] = $data["name"];
+            }
+
+            if (!empty($data["email"])) {
+                if (filter_var($data["email"], FILTER_VALIDATE_EMAIL)) {
+                    if (!$this->emailExists($data["email"])) {
+                        $toChange["email"] = $data["email"];
+                    } else {
+                        return "Novo email já existente!";
+                    }
+                } else {
+                    return "Email inválido!";
+                }
+            }
+
+            if (!empty($data["pass"])) {
+                $toChange["pass"] = password_hash($data["pass"], PASSWORD_BCRYPT);
+            }
+
+            //VERIFICA SE FORAM ENVIADOS DADOS
+            if (count($toChange) > 0) {
+                //TRANSFORMA OS DADOS EM SQL PARA SER FORMATADO PELO PDO
+                $fields = [];
+                foreach ($toChange as $key => $value) {
+                    $fields[] = $key." = :".$key;
+                }
+
+                $sql = "UPDATE users SET ".implode(",", $fields)." WHERE id = :id";
+                $sql = $this->db->prepare($sql);
+                $sql->bindValue(":id", $id);
+
+                foreach ($toChange as $key => $value) {
+                    $sql->bindValue(":".$key, $value);
+                }
+
+                $sql->execute();
+                return "";
+            } else {
+                return "Preencha os dados corretamente.";
+            }
+
+        } else {
+            return "Não é permitido editar outro usuário!";
+        }
+    }
+
+    /**
      * retorna a quantidade de pessoas que um usuário segue
      *
      * @param integer $id_user

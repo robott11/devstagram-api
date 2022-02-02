@@ -105,14 +105,14 @@ class UsersController extends Controller
                 //RESPONDE COM OS DADOS DO USUÁRIO
                 case "GET":
                     $array["data"] = $users->getInfo($id);
-                    
+
                     if (count($array["data"]) === 0) {
                         $array["error"] = "Usuário não existe!";
                     }
                     break;
                 
                 case "PUT":
-                    
+                    $array["error"] = $users->editInfo($id, $data);
                     break;
                 
                 case "DELETE":
