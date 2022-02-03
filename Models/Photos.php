@@ -21,4 +21,25 @@ class Photos extends Model
 
         return $info["c"];
     }
+
+    public function deleteAll(int $id_user)
+    {
+        //DELETAR AS FOTOS
+        $sql = "DELETE FROM photos WHERE id_user = :id_user";
+        $sql = $this->db->prepare($sql);
+        $sql->bindValue(":id_user", $id_user);
+        $sql->execute();
+
+        //DELETAR COMENTÁRIOS
+        $sql = "DELETE FROM photos_comments WHERE id_user = :id_user";
+        $sql = $this->db->prepare($sql);
+        $sql->bindValue(":id_user", $id_user);
+        $sql->execute();
+
+        //DELETAR LIKES
+        $sql = "DELETE FROM photos_likes WHERE id_user = :id_user";
+        $sql = $this->db->prepare($sql);
+        $sql->bindValue(":id_user", $id_user);
+        $sql->execute();
+    }
 }

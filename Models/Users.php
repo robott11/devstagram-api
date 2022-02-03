@@ -248,4 +248,34 @@ class Users extends Model
 
         return $info["c"];
     }
+
+    /**
+     * deleta um usuário
+     *
+     * @param integer $id
+     * @return void
+     */
+    public function delete(int $id)
+    {
+        if ($id === $this->getId()) {
+            $photos = new Photos();
+            $photos->deleteAll($id);
+
+            //DELETAR TODOS OS SEGUIDORES E TODOS QUE SEGUIA
+            $sql = "DELETE FROM users_following WHERE id_user_follower = :id OR id_user_followed = :id";
+            $sql = $this->db->prepare($sql);
+            $sql->bindValue(":id", $id);
+            $sql->execute();
+
+            //DELETAR O USUÁRIO
+            $sql = "DELETE FROM users WHERE id = :id";
+            $sql = $this->db->prepare($sql);
+            $sql->bindValue(":id", $id);
+            $sql->execute();
+
+            return "";
+        } else {
+            return "Não é permitido excluir outro usuário!";
+        }
+    }
 }

@@ -116,7 +116,7 @@ class UsersController extends Controller
                     break;
                 
                 case "DELETE":
-
+                    $array["error"] = $users->delete($id);
                     break;
                 
                 default:
