@@ -25,10 +25,11 @@ CREATE TABLE photos (
 CREATE TABLE photos_likes (
     id int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
     id_user int(11) NOT NULL,
-    id_photo int(11) NOT NULL
+    id_photo int(11) NOT NULL,
+    date_posted date NOT NULL
 );
 
-CREATE TABLE photos_comment (
+CREATE TABLE photos_comments (
     id int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
     id_user int(11) NOT NULL,
     id_photo int(11) NOT NULL,
